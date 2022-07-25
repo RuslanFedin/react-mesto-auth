@@ -33,11 +33,6 @@ export const authorize = (email, password) => {
       return res.json();
     }
   })
-  .then((data) => {
-    localStorage.setItem('token', data.token);
-    return data;
-  })
-
 };
 
 export const getContent = (token) => {

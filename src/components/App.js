@@ -45,14 +45,7 @@ function App() {
       });
       api.getCards()
       .then((cardData) => {
-        setCards(cardData.map((card) =>({
-          key: card._id,
-          _id: card._id,
-          link: card.link,
-          name: card.name,
-          likes: card.likes,
-          owner: card.owner,
-        })));
+        setCards(cardData.map((card) =>({...card, key: card._id})));
       })
       .catch((error) => {
         console.log(`ERROR: ${error}`);
@@ -92,29 +85,19 @@ function App() {
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
-
-    !isLiked ?
-      api.setLike(card._id)
-        .then((newCard) => {
-          setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-        })
-        .catch((error) => {
-          console.log(`ERROR: ${error}`);
-        })
-      :
-      api.removeLike(card._id)
-        .then((newCard) => {
-          setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-        })
-        .catch((error) => {
-          console.log(`ERROR: ${error}`);
-        });
+    api.changeCardLike(card._id, !isLiked)
+    .then((newCard) => {
+      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    })
+    .catch((error) => {
+      console.log(`ERROR: ${error}`);
+    });
   }
 
   function handleCardDelete(card) {
     api.deleteCard(card._id)
-      .then((newCard) => {
-        setCards((state) => state.filter((c) => c._id === card._id ? "" : newCard));
+      .then(() => {
+        setCards((state) => state.filter((c) => c._id !== card._id));
       })
       .catch((error) => {
         console.log(`ERROR: ${error}`);
@@ -167,7 +150,7 @@ function App() {
   }
 
   function handleSignOut() {
-    localStorage.removeItem('jwt');
+    localStorage.removeItem('token');
     setEmail('');
     history.push('/sign-in');
     setLoggedIn(false);
@@ -176,20 +159,18 @@ function App() {
   function checkToken() {
     if (localStorage.getItem('token')) {
       const token = localStorage.getItem('token');
-      if (token) {
-        auth.getContent(token)
-          .then((res) => {
-            if (res) {
-              const email = res.data.email
-              setLoggedIn(true);
-              setEmail(email);
-            }
-            history.push('/')
-          })
-          .catch ((error) => {
-            console.log(`ERROR: ${error}`);
-          })
-      }
+      auth.getContent(token)
+      .then((res) => {
+        if (res) {
+          const email = res.data.email
+          setLoggedIn(true);
+          setEmail(email);
+        }
+        history.push('/')
+      })
+      .catch ((error) => {
+        console.log(`ERROR: ${error}`);
+      })
     }
   }
 
