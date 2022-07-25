@@ -5,6 +5,8 @@
   min-height: 181px;
   border-radius: 10px;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   background: #fff;
 }
 

@@ -1,6 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import Card from './Card.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
+import Footer from './Footer.js';
 
 function Main({onEditAvatar, onEditProfile, onAddPlace, onCardClick, onCardLike, onCardDelete, cards}) {
   const currentUser = useContext(CurrentUserContext);
@@ -54,6 +55,7 @@ function Main({onEditAvatar, onEditProfile, onAddPlace, onCardClick, onCardLike,
           ))}
         </ul>
       </section>
+      <Footer/>
     </main>
   );
 }
